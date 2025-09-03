@@ -155,8 +155,7 @@ async def generate_test_cases(file_data: Dict[str, Any]):
             return JSONResponse({
                 "status": "success",
                 "message": "Test cases generated successfully",
-                "data": parsed_response,
-                "raw_response": ai_response
+                "data": parsed_response
             })
             
         except json.JSONDecodeError:
