@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Play, Loader2, CheckCircle, XCircle, FileText, Code } from "lucide-react";
+import { Play, Loader2, CheckCircle, XCircle, FileText, Code, Download, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -114,7 +114,7 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between">
+            <div className="space-y-4">
               <div>
                 <p className="font-medium">Files Ready: {files.length}</p>
                 <p className="text-sm text-muted-foreground">
@@ -125,17 +125,18 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
               <Button 
                 onClick={generateTests}
                 disabled={status !== 'idle' && status !== 'completed' && status !== 'failed'}
-                className="gradient-primary"
+                className="w-full gradient-primary"
+                size="lg"
               >
                 {(status !== 'idle' && status !== 'completed' && status !== 'failed') ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Generating...
+                    Generating Unit Tests...
                   </>
                 ) : (
                   <>
                     <Play className="h-4 w-4 mr-2" />
-                    Generate Tests
+                    Generate Unit Tests
                   </>
                 )}
               </Button>
@@ -203,14 +204,22 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
                 </TabsContent>
 
                 <TabsContent value="reports" className="space-y-4">
-                  <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start">
-                      <FileText className="h-4 w-4 mr-2" />
-                      Download Excel Report ({results.excelReport})
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <Button variant="outline" className="justify-start">
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Excel Report
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Code className="h-4 w-4 mr-2" />
-                      View Coverage Report ({results.coverageReport})
+                    <Button variant="outline" className="justify-start">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Excel Report
+                    </Button>
+                    <Button variant="outline" className="justify-start">
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Test Scripts
+                    </Button>
+                    <Button variant="outline" className="justify-start">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Test Scripts
                     </Button>
                   </div>
                 </TabsContent>
