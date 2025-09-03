@@ -24,7 +24,7 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
 
   const steps = [
     { id: 'generating', label: 'Generating Tests with Gemini AI', progress: 50 },
-    { id: 'parsing', label: 'Parsing Response & Extracting Scripts', progress: 100 }
+    { id: 'parsing', label: 'Test Generation Complete', progress: 100 }
   ];
 
   const generateTests = async () => {
