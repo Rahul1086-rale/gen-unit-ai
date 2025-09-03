@@ -27,27 +27,91 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
     { id: 'parsing', label: 'Test Generation Complete', progress: 100 }
   ];
 
+  const API_BASE_URL = 'http://localhost:8000';
+
+  const uploadFiles = async (files: any[]) => {
+    const formData = new FormData();
+    
+    for (const file of files) {
+      formData.append('files', file);
+    }
+    
+    const response = await fetch(`${API_BASE_URL}/upload_files`, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.statusText}`);
+    }
+    
+    return response.json();
+  };
+
+  const generateTestsAPI = async (fileData: any[]) => {
+    const response = await fetch(`${API_BASE_URL}/generate_tests`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ files: fileData }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Test generation failed: ${response.statusText}`);
+    }
+    
+    return response.json();
+  };
+
   const generateTests = async () => {
+    if (!files || files.length === 0) {
+      console.error('No files available for processing');
+      return;
+    }
+
     setStatus('generating');
     setProgress(0);
+    setCurrentStep('Uploading files...');
     
     try {
-      // Simulate the workflow steps
-      for (const step of steps) {
-        setCurrentStep(step.label);
-        setStatus(step.id as TestStatus);
-        setProgress(step.progress);
-        
-        // Simulate API calls and processing time
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
+      // Step 1: Upload files and read content
+      setProgress(25);
+      const fileData = files.map(file => ({
+        filename: file.name,
+        content: file.content || '',
+        size: file.size
+      }));
 
-      // Set completion status
-      setResults({ generated: true });
-      setStatus('completed');
-      onTestGenerated({ generated: true });
+      // Step 2: Generate tests with Gemini AI
+      setCurrentStep('Generating Tests with Gemini AI');
+      setProgress(50);
+      
+      const response = await generateTestsAPI(fileData);
+      
+      if (response.status === 'success' && response.data) {
+        // Step 3: Parse response
+        setCurrentStep('Test Generation Complete');
+        setStatus('parsing');
+        setProgress(100);
+        
+        const testData = response.data;
+        setResults(testData);
+        setExcelData(testData.test_cases || []);
+        setTestScripts({
+          test_runner_script: testData.test_runner_script || '',
+          makefile_content: testData.makefile_content || '',
+          test_cases: testData.test_cases || []
+        });
+        
+        setStatus('completed');
+        onTestGenerated(testData);
+      } else {
+        throw new Error(response.message || 'Failed to generate tests');
+      }
     } catch (error) {
       setStatus('failed');
+      setCurrentStep('Generation failed');
       console.error('Test generation failed:', error);
     }
   };
