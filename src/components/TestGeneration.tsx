@@ -12,7 +12,7 @@ interface TestGenerationProps {
   onTestGenerated: (results: any) => void;
 }
 
-type TestStatus = 'idle' | 'generating' | 'parsing' | 'running' | 'completed' | 'failed';
+type TestStatus = 'idle' | 'generating' | 'parsing' | 'completed' | 'failed';
 
 const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
   const [status, setStatus] = useState<TestStatus>('idle');
@@ -23,10 +23,8 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
   const [testScripts, setTestScripts] = useState<any>(null);
 
   const steps = [
-    { id: 'generating', label: 'Generating Tests with Gemini AI', progress: 25 },
-    { id: 'parsing', label: 'Parsing Response & Extracting Scripts', progress: 50 },
-    { id: 'running', label: 'Compiling & Running Unit Tests', progress: 75 },
-    { id: 'completed', label: 'Generating Coverage Report', progress: 100 }
+    { id: 'generating', label: 'Generating Tests with Gemini AI', progress: 50 },
+    { id: 'parsing', label: 'Parsing Response & Extracting Scripts', progress: 100 }
   ];
 
   const generateTests = async () => {
@@ -58,7 +56,6 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
     switch (status) {
       case 'generating':
       case 'parsing':
-      case 'running':
         return <Loader2 className="h-5 w-5 animate-spin text-primary" />;
       case 'completed':
         return <CheckCircle className="h-5 w-5 text-success" />;
@@ -74,7 +71,6 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
       idle: { variant: 'secondary', text: 'Ready' },
       generating: { variant: 'default', text: 'Generating...' },
       parsing: { variant: 'default', text: 'Parsing...' },
-      running: { variant: 'default', text: 'Running...' },
       completed: { variant: 'success', text: 'Completed' },
       failed: { variant: 'destructive', text: 'Failed' }
     };
@@ -142,7 +138,6 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
 
             {results && status === 'completed' && (
               <div className="mt-6 space-y-4">
-                <h3 className="text-lg font-semibold">Test Generation Complete</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <Dialog>
                     <DialogTrigger asChild>
