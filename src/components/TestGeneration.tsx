@@ -202,7 +202,7 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
 
             {results && status === 'completed' && (
               <div className="mt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button variant="outline" className="justify-start">
@@ -305,6 +305,27 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
                       </div>
                     </DialogContent>
                   </Dialog>
+
+                  {results.csv_content && (
+                    <Button 
+                      variant="outline" 
+                      className="justify-start"
+                      onClick={() => {
+                        const blob = new Blob([results.csv_content], { type: 'text/csv' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'test_cases.csv';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download CSV
+                    </Button>
+                  )}
                 </div>
               </div>
             )}
