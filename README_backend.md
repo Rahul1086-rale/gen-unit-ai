@@ -4,20 +4,11 @@
 
 ### 1. Install Dependencies
 
-First, create a virtual environment and install the required packages:
+First, navigate to the backend directory and install dependencies:
 
 ```bash
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
+cd backend
+pip install -r ../requirements.txt
 ```
 
 ### 2. Set up Gemini API Key
@@ -29,22 +20,19 @@ You need a Google Gemini API key to generate unit tests.
 3. Set the environment variable:
 
 ```bash
-# On Windows:
-set GOOGLE_API_KEY=your_api_key_here
-
-# On macOS/Linux:
-export GOOGLE_API_KEY=your_api_key_here
+export GOOGLE_API_KEY="your_api_key_here"
 ```
 
-Or update the `GEMINI_API_KEY` variable in `app.py` directly.
-
-### 3. Run the FastAPI Backend
+### 3. Run the Backend
 
 ```bash
-# Run with uvicorn
+# Option 1: Using the run script (recommended)
+python run_server.py
+
+# Option 2: Direct uvicorn command
 python app.py
 
-# Or use uvicorn directly
+# Option 3: With uvicorn and auto-reload
 uvicorn app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
@@ -55,12 +43,20 @@ The API will be available at:
 
 ### 4. Run the Frontend
 
-Make sure the frontend is configured to connect to the backend at `http://localhost:8000`.
+In a separate terminal, run the frontend:
 
 ```bash
+# From project root
 npm install
 npm run dev
 ```
+
+## Features
+
+- **Robust Gemini AI Integration**: Uses advanced prompting and parsing from `generateUnitTest.py`
+- **Comprehensive Coverage**: Generates tests for statement, branch, condition, boundary value, and error path coverage
+- **Unity Framework**: All generated tests follow Unity testing framework conventions
+- **Smart Parsing**: Handles multiple response formats from AI with fallback mechanisms
 
 ## API Endpoints
 
@@ -68,55 +64,27 @@ npm run dev
 Upload C/C++ source and header files.
 
 ### POST /generate_tests  
-Generate unit tests using Gemini AI.
-
-**Request Body:**
-```json
-{
-  "files": [
-    {
-      "filename": "example.c",
-      "content": "source code content",
-      "size": 1234
-    }
-  ]
-}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "Test cases generated successfully",
-  "data": {
-    "test_cases": [...],
-    "test_runner_script": "...",
-    "makefile_content": "...",
-    "summary": {...}
-  }
-}
-```
+Generate unit tests using Gemini AI with robust parsing.
 
 ### GET /health
 Health check endpoint.
 
-## Project Structure
+## File Structure
 
 ```
-├── app.py                 # Main FastAPI application
-├── backend/
-│   └── generateUnitTest.py # Original test generation logic
-├── uploads/               # Uploaded files directory
-├── requirements.txt       # Python dependencies
-└── README_backend.md     # This file
+backend/
+├── app.py                 # FastAPI application with integrated parsing
+├── generateUnitTest.py    # Core Gemini AI functions and parsing logic  
+├── run_server.py          # Convenient server runner script
+├── uploads/               # Temporary uploaded files
+├── temp_files/            # Temporary processing files
+└── README.md             # Backend documentation
 ```
 
-## Troubleshooting
+## Integration Notes
 
-1. **CORS Issues**: Make sure the frontend URL is added to the `allow_origins` list in `app.py`
-
-2. **API Key Issues**: Verify your Gemini API key is valid and has sufficient quota
-
-3. **File Upload Issues**: Ensure uploaded files are valid C/C++ source files
-
-4. **Import Errors**: Make sure all dependencies are installed with `pip install -r requirements.txt`
+The backend now uses the robust functions from `generateUnitTest.py`:
+- `call_gemini()` for AI integration with fallback support
+- `try_extract_json_block()` for JSON parsing  
+- `parse_markdown_table()` for table extraction
+- Structured prompts for comprehensive test generation
