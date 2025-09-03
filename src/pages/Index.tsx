@@ -41,17 +41,6 @@ const Index = () => {
           />
         </div>
 
-        {testResults && (
-          <div className="max-w-4xl mx-auto mt-12 p-6 bg-success/10 border border-success/20 rounded-lg animate-fade-in">
-            <h3 className="text-lg font-semibold text-success mb-2">
-              Test Generation Complete!
-            </h3>
-            <p className="text-muted-foreground">
-              Generated {testResults.testsGenerated} unit tests with {testResults.coverage}% coverage. 
-              Execution completed in {testResults.executionTime}.
-            </p>
-          </div>
-        )}
       </main>
     </div>
   );
