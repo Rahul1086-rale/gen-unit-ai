@@ -202,7 +202,7 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
 
             {results && status === 'completed' && (
               <div className="mt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button variant="outline" className="justify-start">
@@ -210,34 +210,42 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
                         View Excel Report
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+                    <DialogContent className="max-w-6xl max-h-[80vh] overflow-auto">
                       <DialogHeader>
                         <DialogTitle>Excel Test Report</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div className="border rounded-lg p-4 bg-muted/50">
                           <h4 className="font-semibold mb-3">Test Cases Summary</h4>
-                          <div className="grid grid-cols-5 gap-2 text-sm font-medium border-b pb-2">
-                            <div>Test ID</div>
-                            <div>Function Name</div>
-                            <div>Description</div>
-                            <div>Expected Result</div>
-                            <div>Status</div>
-                          </div>
-                          <div className="space-y-2 mt-2">
-                            {excelData?.map((row: any, index: number) => (
-                              <div key={index} className="grid grid-cols-5 gap-2 text-sm py-2 border-b">
-                                <div className="font-mono">TC_{String(index + 1).padStart(3, '0')}</div>
-                                <div className="font-mono">{row.function_name || 'N/A'}</div>
-                                <div className="text-muted-foreground">{row.description || 'N/A'}</div>
-                                <div className="text-muted-foreground">{row.expected_result || 'N/A'}</div>
-                                <div><Badge variant="secondary">Pending</Badge></div>
-                              </div>
-                            )) || (
-                              <div className="text-center py-4 text-muted-foreground">
-                                Excel data will be loaded here after generation
-                              </div>
-                            )}
+                          <div className="overflow-x-auto">
+                            <table className="w-full min-w-[600px]">
+                              <thead>
+                                <tr className="text-sm font-medium border-b">
+                                  <th className="text-left p-2 w-20">Test ID</th>
+                                  <th className="text-left p-2 w-32">Function Name</th>
+                                  <th className="text-left p-2 flex-1">Description</th>
+                                  <th className="text-left p-2 flex-1">Expected Result</th>
+                                  <th className="text-left p-2 w-20">Status</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {excelData?.map((row: any, index: number) => (
+                                  <tr key={index} className="text-sm border-b">
+                                    <td className="p-2 font-mono">TC_{String(index + 1).padStart(3, '0')}</td>
+                                    <td className="p-2 font-mono">{row.function_name || 'N/A'}</td>
+                                    <td className="p-2 text-muted-foreground">{row.description || 'N/A'}</td>
+                                    <td className="p-2 text-muted-foreground">{row.expected_result || 'N/A'}</td>
+                                    <td className="p-2"><Badge variant="secondary">Pending</Badge></td>
+                                  </tr>
+                                )) || (
+                                  <tr>
+                                    <td colSpan={5} className="text-center py-4 text-muted-foreground">
+                                      Excel data will be loaded here after generation
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
                           </div>
                         </div>
                       </div>
@@ -251,7 +259,7 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
                         View Test Scripts
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+                    <DialogContent className="max-w-6xl max-h-[80vh] overflow-auto">
                       <DialogHeader>
                         <DialogTitle>Generated Test Scripts</DialogTitle>
                       </DialogHeader>
@@ -261,8 +269,8 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
                             <div className="space-y-3">
                               <div>
                                 <h4 className="font-semibold mb-2">Test Runner (test_runner.c)</h4>
-                                <div className="bg-muted p-4 rounded-lg">
-                                  <pre className="text-sm overflow-x-auto whitespace-pre-wrap">
+                                <div className="bg-muted p-4 rounded-lg overflow-x-auto">
+                                  <pre className="text-xs whitespace-pre-wrap break-words">
                                     {testScripts.test_runner_script || 'No test runner script available'}
                                   </pre>
                                 </div>
@@ -270,8 +278,8 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
                               
                               <div>
                                 <h4 className="font-semibold mb-2">Makefile</h4>
-                                <div className="bg-muted p-4 rounded-lg">
-                                  <pre className="text-sm overflow-x-auto whitespace-pre-wrap">
+                                <div className="bg-muted p-4 rounded-lg overflow-x-auto">
+                                  <pre className="text-xs whitespace-pre-wrap break-words">
                                     {testScripts.makefile_content || 'No makefile available'}
                                   </pre>
                                 </div>
@@ -281,9 +289,9 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
                                 <h4 className="font-semibold mb-2">Test Cases</h4>
                                 <div className="space-y-3">
                                   {testScripts.test_cases?.map((testCase: any, index: number) => (
-                                    <div key={index} className="bg-muted p-4 rounded-lg">
+                                    <div key={index} className="bg-muted p-4 rounded-lg overflow-x-auto">
                                       <h5 className="font-medium mb-2">{testCase.function_name}</h5>
-                                      <pre className="text-sm overflow-x-auto whitespace-pre-wrap">
+                                      <pre className="text-xs whitespace-pre-wrap break-words">
                                         {testCase.test_code}
                                       </pre>
                                     </div>
@@ -324,6 +332,48 @@ const TestGeneration = ({ files, onTestGenerated }: TestGenerationProps) => {
                     >
                       <Download className="h-4 w-4 mr-2" />
                       Download CSV
+                    </Button>
+                  )}
+
+                  {testScripts?.test_runner_script && (
+                    <Button 
+                      variant="outline" 
+                      className="justify-start"
+                      onClick={() => {
+                        const blob = new Blob([testScripts.test_runner_script], { type: 'text/plain' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'test_runner.c';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Test Runner
+                    </Button>
+                  )}
+
+                  {testScripts?.makefile_content && (
+                    <Button 
+                      variant="outline" 
+                      className="justify-start"
+                      onClick={() => {
+                        const blob = new Blob([testScripts.makefile_content], { type: 'text/plain' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'Makefile';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Makefile
                     </Button>
                   )}
                 </div>
